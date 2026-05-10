@@ -72,6 +72,44 @@ Then execute `eval.py` the same as in standard evaluation:
 For more running options, please refer to `utils/config.py`
 
 
+## Novelty Work
+
+- **Strategic Hub Masking (Training Phase)** - Standard Graph Neural Networks often suffer from "Hub Bias," where high-traffic nodes (e.g., sh, sudo, init) dominate the mathematical signal, making the model less sensitive to subtle hijacks in smaller applications.
+
+The Innovation: Unlike the baseline random 50% masking, we implemented Degree-Weighted Strategic Masking. During training, the model intentionally masks high-degree "Hub" nodes, forcing the encoder to learn the deep structural dependencies of "Leaf" nodes.
+
+The Result: Significantly higher sensitivity to "Living off the Land" attacks. Our model identifies when a legitimate process (like the pine mail client) is structurally hijacked, even if its internal behavioral features remain largely unchanged.
+
+
+- **Explainable Anomaly Decomposition (Inference Phase)** - Most anomaly detectors operate as "Black Boxes," providing a single scalar score that lacks context. We introduced a Forensic Decomposition Layer that splits the total reconstruction error into two distinct signals:
+
+-- Behavioral Error ($L_B$): Deviations in node attributes (e.g., unexpected process flags, modified user IDs).
+
+
+-- Structural Error ($L_S$): Deviations in graph topology (e.g., unauthorized lateral movement, illegal socket connections).
+
+
+-- Forensic Utility: This allows security analysts to distinguish between hijacked legitimate processes (High Structural Error) and malicious new payloads (High Behavioral Error).
+
+
+
+**HOW TO IMPLEMENT?**
+
+
+Please uncomment the commented code in model/autoencoder.py and MAGIC-main/eval.py and comment the existing code. 
+
+You will have to retrain the model again using 
+
+```
+  python train.py --dataset *your_dataset*
+```
+Then execute `eval.py` the same as in standard evaluation:
+```
+  python eval.py --dataset *your_dataset*
+```
+
+
+
 ## Cite 
  
 If you make advantage of MAGIC in your research, please cite the following in your manuscript:
